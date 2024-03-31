@@ -55,10 +55,10 @@ namespace util
 			HKEY h_key;
 			DWORD type, size;
 			LPBYTE data;
-			RegOpenKeyEx(HKEY_LOCAL_MACHINE, "HARDWARE\\RESOURCEMAP\\System Resources\\Physical Memory", 0, KEY_READ, &h_key);
-			RegQueryValueEx(h_key, ".Translated", NULL, &type, NULL, &size); //get size
+			RegOpenKeyEx(HKEY_LOCAL_MACHINE, TEXT("HARDWARE\\RESOURCEMAP\\System Resources\\Physical Memory"), 0, KEY_READ, &h_key);
+			RegQueryValueEx(h_key, L".Translated", NULL, &type, NULL, &size); //get size
 			data = new BYTE[size];
-			RegQueryValueEx(h_key, ".Translated", NULL, &type, data, &size);
+			RegQueryValueEx(h_key, L".Translated", NULL, &type, data, &size);
 			DWORD count = *(DWORD*)(data + 16);
 			auto pmi = data + 24;
 			for (int dwIndex = 0; dwIndex < count; dwIndex++)
@@ -174,10 +174,10 @@ namespace util
 				full_path.replace(full_path.find("\\SystemRoot\\"), 
 					sizeof("\\SystemRoot\\") - 1, std::string(getenv("SYSTEMROOT")).append("\\"));
 
-				const auto module_base = 
-					LoadLibraryEx(
-						full_path.c_str(),
-						NULL, 
+				const auto module_base =
+					LoadLibraryExW(
+						reinterpret_cast<LPCWSTR>(full_path.c_str()),
+						NULL,
 						DONT_RESOLVE_DLL_REFERENCES
 					);
 
